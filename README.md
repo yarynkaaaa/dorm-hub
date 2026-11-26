@@ -1,16 +1,27 @@
-# React + Vite
+# DormHub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-сайт для управління студентським гуртожитком (React + Vite).
 
-Currently, two official plugins are available:
+## Запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # збірка в dist/
+```
 
-## React Compiler
+## Docker
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```
+docker build -t dorm-hub .
+docker run --rm -p 5173:5173 -v "${PWD}:/app" -v /app/node_modules dorm-hub
+```
 
-## Expanding the ESLint configuration
+## Структура
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `src/data`: тестові дані кімнат
+- `src/utils`: правило статусу кімнати
+- `src/components`: повторно використовувані компоненти
+- `src/pages`: сторінки, складені з компонентів
+- `docs/project-plan.md`: план проєкту
+- `docs/architecture.md`: ієрархія компонентів і контракти props
