@@ -1,14 +1,24 @@
 import { useState } from "react";
 import Button from "./Button";
 import StatusBadge from "./StatusBadge";
+import { useHostel } from "../context/HostelContext";
 import { getFreePlaces, getRoomStatus } from "../utils/roomStatus";
 
-// props: room, selected (чи вибрана кімната), onSelect (функція вибору)
-function RoomCard({ room, selected = false, onSelect }) {
+// props: room ({ id, number, floor, capacity, occupied }, обов'язково)
+function RoomCard({ room }) {
+  const { selectedRoomId, selectRoom } = useHostel();
   const [expanded, setExpanded] = useState(false);
   const [places, setPlaces] = useState(1);
+  const selected = selectedRoomId === room.id;
   const status = getRoomStatus(room);
   const free = getFreePlaces(room);
+
+  function handleSelect() {
+    selectRoom(room.id);
+    document
+      .getElementById("settlement")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
 
   return (
     <article className={selected ? "card card-selected" : "card"}>
@@ -56,15 +66,9 @@ function RoomCard({ room, selected = false, onSelect }) {
         </div>
       )}
 
-      {onSelect && (
-        <Button
-          disabled={free === 0}
-          pressed={selected}
-          onClick={() => onSelect(room.id)}
-        >
-          {selected ? "Обрано" : "Подати заявку"}
-        </Button>
-      )}
+      <Button disabled={free === 0} pressed={selected} onClick={handleSelect}>
+        {selected ? "Обрано" : "Подати заявку"}
+      </Button>
     </article>
   );
 }

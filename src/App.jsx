@@ -1,26 +1,16 @@
-import { useState } from "react";
 import Layout from "./components/Layout";
+import { HostelProvider } from "./context/HostelProvider";
 import RoomsPage from "./pages/RoomsPage";
 import SettlementPage from "./pages/SettlementPage";
 
 function App() {
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
-
-  function handleSelect(roomId) {
-    setSelectedRoomId(roomId);
-    document
-      .getElementById("settlement")
-      ?.scrollIntoView({ behavior: "smooth" });
-  }
-
   return (
-    <Layout>
-      <RoomsPage selectedRoomId={selectedRoomId} onSelect={handleSelect} />
-      <SettlementPage
-        selectedRoomId={selectedRoomId}
-        onSelect={setSelectedRoomId}
-      />
-    </Layout>
+    <HostelProvider>
+      <Layout>
+        <RoomsPage />
+        <SettlementPage />
+      </Layout>
+    </HostelProvider>
   );
 }
 

@@ -492,3 +492,17 @@ body {
   gap: 12px;
   flex-wrap: wrap;
 }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--latte);
+  color: var(--espresso);
+  font-size: 0.9rem;
+  font-weight: 700;
+}

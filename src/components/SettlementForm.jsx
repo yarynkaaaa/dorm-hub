@@ -3,17 +3,18 @@ import Availability from "./Availability";
 import Button from "./Button";
 import DraftSummary from "./DraftSummary";
 import FormField from "./FormField";
+import { useHostel } from "../context/HostelContext";
 import { getFreePlaces } from "../utils/roomStatus";
 
 const emptyDraft = { fullName: "", group: "" };
 
-// props: rooms, selectedRoomId (число або null), onSelectRoom (змінити вибір)
-function SettlementForm({ rooms, selectedRoomId, onSelectRoom }) {
+// props: rooms (масив кімнат)
+function SettlementForm({ rooms }) {
+  const { selectedRoom, selectRoom, clearSelection } = useHostel();
   const [draft, setDraft] = useState(emptyDraft);
   const [submitted, setSubmitted] = useState(null);
 
   const availableRooms = rooms.filter((room) => getFreePlaces(room) > 0);
-  const selectedRoom = rooms.find((room) => room.id === selectedRoomId) ?? null;
   const canSubmit =
     draft.fullName.trim() !== "" &&
     draft.group.trim() !== "" &&
@@ -27,14 +28,14 @@ function SettlementForm({ rooms, selectedRoomId, onSelectRoom }) {
 
   function handleRoom(event) {
     const value = event.target.value;
-    onSelectRoom(value ? Number(value) : null);
+    selectRoom(value ? Number(value) : null);
     setSubmitted(null);
   }
 
   function handleClear() {
     setDraft(emptyDraft);
     setSubmitted(null);
-    onSelectRoom(null);
+    clearSelection();
   }
 
   function handleSubmit(event) {
