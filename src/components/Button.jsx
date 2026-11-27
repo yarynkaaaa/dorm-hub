@@ -1,16 +1,20 @@
-// props: children (підпис), type ("button" за замовчуванням), variant, disabled, onClick
+// props: children, type, variant ("primary" | "secondary"), disabled,
+//        pressed (необов'язково: true/false вмикає режим перемикача), onClick
 function Button({
   children,
   type = "button",
   variant = "primary",
   disabled = false,
+  pressed,
   onClick,
 }) {
+  const className = `btn btn-${variant}${pressed ? " is-pressed" : ""}`;
   return (
     <button
       type={type}
-      className={`btn btn-${variant}`}
+      className={className}
       disabled={disabled}
+      aria-pressed={pressed}
       onClick={onClick}
     >
       {children}

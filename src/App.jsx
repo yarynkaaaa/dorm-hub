@@ -4,10 +4,10 @@ import RoomsPage from "./pages/RoomsPage";
 import SettlementPage from "./pages/SettlementPage";
 
 function App() {
-  const [selectedRoomId, setSelectedRoomId] = useState("");
+  const [selectedRoomId, setSelectedRoomId] = useState(null);
 
   function handleSelect(roomId) {
-    setSelectedRoomId(String(roomId));
+    setSelectedRoomId(roomId);
     document
       .getElementById("settlement")
       ?.scrollIntoView({ behavior: "smooth" });
@@ -15,8 +15,11 @@ function App() {
 
   return (
     <Layout>
-      <RoomsPage onSelect={handleSelect} />
-      <SettlementPage selectedRoomId={selectedRoomId} />
+      <RoomsPage selectedRoomId={selectedRoomId} onSelect={handleSelect} />
+      <SettlementPage
+        selectedRoomId={selectedRoomId}
+        onSelect={setSelectedRoomId}
+      />
     </Layout>
   );
 }

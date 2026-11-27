@@ -1,26 +1,47 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Availability from "./Availability";
 import Button from "./Button";
+import DraftSummary from "./DraftSummary";
 import FormField from "./FormField";
 import { getFreePlaces } from "../utils/roomStatus";
 
-// props: rooms (масив кімнат), selectedRoomId (рядок; "" — кімнату не обрано)
-function SettlementForm({ rooms, selectedRoomId = "" }) {
-  const [fullName, setFullName] = useState("");
-  const [group, setGroup] = useState("");
-  const [roomId, setRoomId] = useState(selectedRoomId);
-  const [prepared, setPrepared] = useState(null);
+const emptyDraft = { fullName: "", group: "" };
 
-  useEffect(() => {
-    if (selectedRoomId) setRoomId(selectedRoomId);
-  }, [selectedRoomId]);
+// props: rooms, selectedRoomId (число або null), onSelectRoom (змінити вибір)
+function SettlementForm({ rooms, selectedRoomId, onSelectRoom }) {
+  const [draft, setDraft] = useState(emptyDraft);
+  const [submitted, setSubmitted] = useState(null);
 
   const availableRooms = rooms.filter((room) => getFreePlaces(room) > 0);
-  const selectedRoom = rooms.find((room) => String(room.id) === roomId);
+  const selectedRoom = rooms.find((room) => room.id === selectedRoomId) ?? null;
+  const canSubmit =
+    draft.fullName.trim() !== "" &&
+    draft.group.trim() !== "" &&
+    selectedRoom !== null;
+
+  function handleField(event) {
+    const { name, value } = event.target;
+    setDraft((prev) => ({ ...prev, [name]: value }));
+    setSubmitted(null);
+  }
+
+  function handleRoom(event) {
+    const value = event.target.value;
+    onSelectRoom(value ? Number(value) : null);
+    setSubmitted(null);
+  }
+
+  function handleClear() {
+    setDraft(emptyDraft);
+    setSubmitted(null);
+    onSelectRoom(null);
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
-    setPrepared({ fullName, group, roomNumber: selectedRoom.number });
+    if (canSubmit) {
+      setSubmitted({ ...draft, roomNumber: selectedRoom.number });
+    }
   }
 
   return (
@@ -28,29 +49,28 @@ function SettlementForm({ rooms, selectedRoomId = "" }) {
       <FormField id="fullName" label="ПІБ мешканця">
         <input
           id="fullName"
+          name="fullName"
           type="text"
-          required
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          value={draft.fullName}
+          onChange={handleField}
         />
       </FormField>
 
       <FormField id="group" label="Група" hint="Наприклад, ІПЗ 24-1">
         <input
           id="group"
+          name="group"
           type="text"
-          required
-          value={group}
-          onChange={(e) => setGroup(e.target.value)}
+          value={draft.group}
+          onChange={handleField}
         />
       </FormField>
 
       <FormField id="room" label="Кімната">
         <select
           id="room"
-          required
-          value={roomId}
-          onChange={(e) => setRoomId(e.target.value)}
+          value={selectedRoom ? String(selectedRoom.id) : ""}
+          onChange={handleRoom}
         >
           <option value="">Оберіть кімнату</option>
           {availableRooms.map((room) => (
@@ -68,12 +88,21 @@ function SettlementForm({ rooms, selectedRoomId = "" }) {
         />
       )}
 
-      <Button type="submit">Підготувати заявку</Button>
+      <DraftSummary draft={draft} room={selectedRoom} />
 
-      {prepared && (
+      <div className="form-actions">
+        <Button type="submit" disabled={!canSubmit}>
+          Підготувати заявку
+        </Button>
+        <Button variant="secondary" onClick={handleClear}>
+          Очистити
+        </Button>
+      </div>
+
+      {submitted && (
         <p role="status" className="success">
-          Заявку підготовлено: {prepared.fullName} ({prepared.group}), кімната{" "}
-          {prepared.roomNumber}.
+          Заявку підготовлено: {submitted.fullName} ({submitted.group}), кімната{" "}
+          {submitted.roomNumber}.
         </p>
       )}
     </form>
